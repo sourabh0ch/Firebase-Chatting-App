@@ -53,6 +53,8 @@ public class ConversationFragment extends Fragment {
         context = getActivity();
        rlConversation = (RecyclerView)view.findViewById(R.id.recyclerViewConversation);
 
+       auth = FirebaseAuth.getInstance();
+
         // current user id
        current_user_id = auth.getCurrentUser().getUid();
 

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+
+        <RelativeLayout
+            android:id="@+id/rl_image_layout"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/group_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/circle_image_group" />
+
+            <ImageView
+                android:id="@+id/userPresence"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_alignEnd="@id/group_image"
+                android:layout_alignBottom="@id/group_image"
+                android:background="@drawable/circle_grey" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlContactRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/rl_image_layout"
+            android:paddingLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="15dp">
+
+
+            <RelativeLayout
+                android:id="@+id/layOutName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Sourabh Chouhan"
+                    android:textColor="@color/color_magneta"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/chat_msg_time"
+                    android:layout_width="50dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginRight="1dp"
+                    android:gravity="right"
+                    android:text="4:30 PM"
+                    android:textColor="@color/colorTime"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/layOutName"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:id="@+id/icon_layout"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/arrow_icon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="2dp"
+                        android:src="@drawable/envelope"
+                        android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/envelopeIcon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/envelope"
+                    android:visibility="gone"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="2dp"/>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/chat_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="Message failed to deliver"
+                    android:textColor="@color/msg_failed"
+                    android:layout_toRightOf="@+id/icon_layout"
+                    android:layout_alignParentBottom="true"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    android:layout_toLeftOf="@+id/chat_msg_count"
+                    android:layout_marginBottom="2dp"/>
+
+                <TextView
+                    android:id="@+id/chat_msg_count"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:text="12"
+                    android:gravity="center"
+                    android:textSize="8sp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/circle_msg_count"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="2dp"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/grey"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/rl_image_layout"
+            android:layout_marginLeft="20dp"
+            />
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

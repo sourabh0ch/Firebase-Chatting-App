@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="rapport_white">#ffffff</color>
+    <color name="rapport_black">#000000</color>
+    <color name="rapport_gray_light_bg">#e0e5e7</color>
+    <color name="rapport_green_light">#83b600</color>
+    <color name="rapport_cyan">#00aad6</color>
+    <color name="grey_light">#d7d7d7</color>
+    <color name="grey">#c3c3c3</color>
+    <color name="grey1">#f9f5f5</color>
+    <color name="green">#00BA3B</color>
+    <color name="black1">#4d4c4c</color>
+    <color name="grey2">#f0f3f8</color>
+    <color name="red">#ff1014</color>
+    <item name="rapport_chat_blue" type="color">#63aeeb</item>
+    <color name="rapport_gray">#a1a1a1</color>
+    <color name="light_gray">#d7d7d7</color>
+    <color name="gray">#C0C0C0</color>
+    <color name="grey3">#a1a1a1</color>
+    <color name="colorDevider">#de000000</color>
+    <color name="rapport_faint_gray">#c7c7c7</color>
+    <color name="rapport_red_dark">#DA0505</color>
+    <item name="rapport_darkgrey" type="color">#545455</item>
+    <color name="rapport_light_gray">#F6F6F6</color>
+
+    <color name="gray98">#fafafa</color>
+    <color name="loginEtView">#e1e1e1</color>
+    <color name="gray58">#949494</color>
+    <color name="dividerColor">#DE000000</color>
+    <color name="color_magneta">#00BCAD</color>
+    <color name="header_color">#2c2c2c</color>
+    <color name="formName">#3F4556</color>
+    <color name="timeColor">#66000000</color>
+    <color name="creatorName">#DE000000</color>
+    <color name="createdBy">#99000000</color>
+    <color name="border_color_quiz">#FFDB58</color>
+    <color name="border_color_poll">#F62817</color>
+    <color name="border_color_survey">#3B9C9C</color>
+    <color name="toolbar_color">#2C3539</color>
+    <color name="tiffany_blue">#81D8D0</color>
+
+    <color name="colorUserName">#3F4556</color>
+    <color name="colorTime">#66000000</color>
+    <color name="msg_failed">#99000000</color>
+    <color name="view_line">#DE000000</color>
+    <color name="designation_text_color">#7E7F80</color>
+
+    <color name="rapport_purple">#a120bc</color>
+    <color name="rapport_orange2">#f78408</color>
+    <color name="rapport_green_dull">#00a29d</color>
+
+    <color name="rapport_transparent_black_24">#24000000</color>
+</resources>

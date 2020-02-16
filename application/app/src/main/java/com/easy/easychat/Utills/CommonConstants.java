@@ -10,6 +10,7 @@ public class CommonConstants {
     public static final String STATUS = "status";
     public static final String USER_IMAGE = "image";
     public static final String USER = "user";
+    public static final String USERS = "users";
     public static final String CHATS = "chats";
     public static final String MESSAGE = "message";
     public static final String OTP = "otp";

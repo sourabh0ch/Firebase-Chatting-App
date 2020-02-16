@@ -32,6 +32,11 @@
             android:theme="@style/AppThemeNoActionBar"
             android:windowSoftInputMode="adjustPan"
             />
+
+        <activity android:name=".activity.ChatActivity"
+            android:theme="@style/AppThemeNoActionBar"
+            android:windowSoftInputMode="adjustPan"
+            />
     </application>
 
 </manifest>
