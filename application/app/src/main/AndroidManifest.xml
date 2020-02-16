@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.easy.easychat">
     
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -34,6 +35,11 @@
             />
 
         <activity android:name=".activity.ChatActivity"
+            android:theme="@style/AppThemeNoActionBar"
+            android:windowSoftInputMode="adjustPan"
+            />
+
+        <activity android:name=".activity.ProfileActivity"
             android:theme="@style/AppThemeNoActionBar"
             android:windowSoftInputMode="adjustPan"
             />

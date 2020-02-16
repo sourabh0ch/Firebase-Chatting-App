@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,8 +28,8 @@
                 android:id="@+id/userPresence"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
-                android:layout_alignEnd="@id/group_image"
-                android:layout_alignBottom="@id/group_image"
+                android:layout_alignEnd="@id/user_image"
+                android:layout_alignBottom="@id/user_image"
                 android:background="@drawable/circle_grey" />
 
         </RelativeLayout>
