@@ -46,7 +46,7 @@ public class LoginWithEmailAndPassword extends AppCompatActivity {
 
     private void initView(){
         etEmail = (EditText)findViewById(R.id.et_email);
-        etPwd  = (EditText)findViewById(R.id.et_pwd);
+        etPwd  = this.<EditText>findViewById(R.id.et_pwd);
         btnLogin = (Button)findViewById(R.id.btn_login);
         tvNewUser = (TextView)findViewById(R.id.tv_register_user);
         progressDialog = new ProgressDialog(this);

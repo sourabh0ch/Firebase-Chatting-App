@@ -16,7 +16,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="EasyChat"
-            android:layout_marginLeft="10dp"
             android:textSize="20sp"
             android:textColor="@color/rapport_white"
             android:layout_centerVertical="true"

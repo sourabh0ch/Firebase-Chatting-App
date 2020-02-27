@@ -1,5 +1,6 @@
 package com.easy.easychat.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -33,7 +34,8 @@ public class ChatActivity extends AppCompatActivity {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.main__toolbar1);
         tvHeader = (TextView)mToolbar.findViewById(R.id.header);
         ivBack = (ImageView)findViewById(R.id.hdr_bck_icon);
-        String name = getIntent().getStringExtra(CommonConstants.USER_NAME);
+        final String name = getIntent().getStringExtra(CommonConstants.USER_NAME);
+        final String id = getIntent().getStringExtra(CommonConstants.UID);
         tvHeader.setText(name);
         ivLogOut = (ImageView) mToolbar.findViewById(R.id.ivLogOut);
         ivLogOut.setVisibility(View.GONE);
@@ -48,6 +50,17 @@ public class ChatActivity extends AppCompatActivity {
                 ChatActivity.this.finish();
             }
         });
+
+        tvHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profileIntent = new Intent(ChatActivity.this, ProfileActivity.class);
+                profileIntent.putExtra(CommonConstants.UID, id);
+                profileIntent.putExtra(CommonConstants.USER_NAME,name);
+                startActivity(profileIntent);
+            }
+        });
+
     }
 
     private void intiView(){
