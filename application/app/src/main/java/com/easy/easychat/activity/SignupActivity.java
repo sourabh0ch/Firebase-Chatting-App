@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.easy.easychat.Utills.SharedPrefrenceUtil;
 import com.google.android.material.textfield.TextInputEditText;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.PasswordTransformationMethod;
@@ -122,6 +124,7 @@ public class SignupActivity extends AppCompatActivity {
                             //----REMOVING THE LOGIN ACTIVITY FROM THE QUEUE----
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+                            SharedPrefrenceUtil.setIsLogIn(SignupActivity.this, true);
                             finish();
                             progressDialog.dismiss();
                         } else {

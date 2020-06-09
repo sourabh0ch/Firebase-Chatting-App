@@ -1,156 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/messageSingleLayout2"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="80dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cvAbout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@color/rapport_white">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/message_profile_layout"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/user_profile_img"
+        android:layout_marginRight="5dp"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/name_text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:inputType="textPersonName"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:text="Display Name"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/message_profile_layout" />
 
-                <TextView
-                    android:id="@+id/aboutText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="About"
-                    android:textColor="@color/rapport_cyan"
-                    android:textSize="20sp"
-                    android:layout_marginLeft="5dp"
-                    />
+    <TextView
+        android:id="@+id/time_text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:text="time"
+        android:layout_marginRight="5dp"
+        android:layout_alignBaseline="@+id/name_text_layout"
+        android:layout_alignBottom="@+id/name_text_layout"
+        android:layout_alignParentEnd="true" />
 
-                <LinearLayout
-                    android:id="@+id/viewLine1"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/rapport_light_gray"
-                    android:layout_below="@id/aboutText"
-                    android:orientation="horizontal" />
+    <TextView
+        android:id="@+id/message_text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="15dp"
+        android:text="TextView"
+        android:layout_below="@+id/name_text_layout"
+        android:layout_alignStart="@+id/name_text_layout" />
 
-                <TextView
-                    android:id="@+id/userName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/viewLine1"
-                    android:text="Sourabh Chouhan"
-                    android:textColor="@color/rapport_black"
-                    android:textSize="20sp"
-                    android:layout_marginLeft="5dp"
-                    />
-
-                <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/userName"
-                    android:text="UserName"
-                    android:textColor="@color/rapport_darkgrey"
-                    android:textSize="15sp"
-                    android:layout_marginLeft="5dp"
-                    />
-            </RelativeLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cvNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_below="@+id/cvAbout"
-            android:background="@color/rapport_white">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/aboutNo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Phone Number and status"
-                    android:textColor="@color/rapport_cyan"
-                    android:textSize="20sp"
-                    android:layout_marginLeft="5dp"
-                    />
-
-                <LinearLayout
-                    android:id="@+id/viewLine2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/rapport_light_gray"
-                    android:layout_below="@id/aboutNo"
-                    android:orientation="horizontal" />
-
-                <TextView
-                    android:id="@+id/phoneNo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/viewLine2"
-                    android:text="123456789"
-                    android:textColor="@color/rapport_black"
-                    android:textSize="20sp"
-                    android:layout_marginLeft="5dp"
-                    />
-
-                <TextView
-                    android:id="@+id/tvMobile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/phoneNo"
-                    android:text="mobileNo"
-                    android:textColor="@color/rapport_darkgrey"
-                    android:textSize="15sp"
-                    android:layout_marginLeft="5dp"
-                    />
-
-                <LinearLayout
-                    android:id="@+id/viewLine3"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/rapport_light_gray"
-                    android:layout_below="@id/tvMobile"
-                    android:orientation="horizontal" />
-
-                <TextView
-                    android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/viewLine3"
-                    android:text="Busy"
-                    android:textColor="@color/rapport_black"
-                    android:textSize="20sp"
-                    android:layout_marginLeft="5dp"
-                    />
-
-                <TextView
-                    android:id="@+id/tvStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/status"
-                    android:text="status"
-                    android:textColor="@color/rapport_darkgrey"
-                    android:textSize="15sp"
-                    android:layout_marginLeft="5dp"
-                    />
-            </RelativeLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-    </RelativeLayout>
+    <!--ImageView
+        android:id="@+id/message_image_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/message_text_layout"
+        android:layout_below="@+id/message_text_layout"
+        android:layout_toEndOf="@+id/message_profile_layout"
+        android:scaleType="centerCrop"
+        /-->
 
 
 
 
 
-</LinearLayout>
+
+</RelativeLayout>

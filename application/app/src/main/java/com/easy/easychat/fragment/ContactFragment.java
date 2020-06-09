@@ -67,6 +67,7 @@ public class ContactFragment extends Fragment {
 
             @Override
             protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
+
                 viewHolder.setName(users.getUserName());
                 viewHolder.setStatus(users.getStatus());
 //                if (users.getImage()!=null){
@@ -78,10 +79,15 @@ public class ContactFragment extends Fragment {
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent chatIntent = new Intent(context, ChatActivity.class);
-                        chatIntent.putExtra(CommonConstants.UID, user_id);
-                        chatIntent.putExtra(CommonConstants.USER_NAME, userName);
-                        startActivity(chatIntent);
+                        try{
+                            Intent chatIntent = new Intent(context, ChatActivity.class);
+                            chatIntent.putExtra(CommonConstants.UID, user_id);
+                            chatIntent.putExtra(CommonConstants.USER_NAME, userName);
+                            startActivity(chatIntent);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                     }
                 });
             }

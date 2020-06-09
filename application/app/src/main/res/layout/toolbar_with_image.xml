@@ -16,7 +16,7 @@
             android:id="@+id/hdr_bck_icon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/back_icon"
+            android:background="@drawable/ic_back"
             android:layout_centerVertical="true"
             />
 
