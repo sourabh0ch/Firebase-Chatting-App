@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.easy.easychat.Utills.CommonConstants;
 import com.easy.easychat.R;
+import com.easy.easychat.Utills.SharedPrefrenceUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -126,6 +127,7 @@ public class OtpActivity extends AppCompatActivity implements TextWatcher {
                         }else{
                             Intent intent = new Intent(OtpActivity.this, HomeActivity.class);
                             startActivity(intent);
+                            SharedPrefrenceUtil.setIsLogIn(OtpActivity.this, true);
                         }
 
                     }else{

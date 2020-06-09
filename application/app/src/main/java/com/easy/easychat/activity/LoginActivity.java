@@ -2,6 +2,7 @@ package com.easy.easychat.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.easy.easychat.Utills.CommonConstants;
 import com.easy.easychat.R;
+import com.easy.easychat.Utills.SharedPrefrenceUtil;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -34,8 +36,28 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        initView();
-        initOnClckListener();
+        proceed();
+
+    }
+
+    private void proceed(){
+        if(SharedPrefrenceUtil.isLogIn(this))
+        {
+            SharedPreferences pref=getSharedPreferences("pendingnoti", MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("pendingnoti", "yes");
+            editor.commit();
+
+            Intent contentIntent = new Intent(LoginActivity.this,
+                    HomeActivity.class);
+            contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(contentIntent);
+            finish();
+        }else {
+            setContentView(R.layout.activity_login);
+            initView();
+            initOnClckListener();
+        }
     }
 
     private void  initView(){
@@ -44,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
         btnGenerateOtp = (Button)findViewById(R.id.btn_generate_otp);
         progressDialog = new ProgressDialog(this);
         auth = FirebaseAuth.getInstance();
-
     }
 
     private void initOnClckListener(){
@@ -115,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this,OtpActivity.class);
         intent.putExtra(CommonConstants.MOBILE_NO,mobileNo);
         intent.putExtra(CommonConstants.OTP,verificationCode);
+        SharedPrefrenceUtil.setIsLogIn(LoginActivity.this, true);
         startActivity(intent);
     }
 

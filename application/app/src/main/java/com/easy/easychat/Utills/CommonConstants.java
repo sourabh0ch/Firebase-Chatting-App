@@ -17,4 +17,5 @@ public class CommonConstants {
 
     public static final String NAME = "name";
     public static final String THUMB_IMAGE = "thumb_image";
+    public static final String MESSAGES = "messages";
 }

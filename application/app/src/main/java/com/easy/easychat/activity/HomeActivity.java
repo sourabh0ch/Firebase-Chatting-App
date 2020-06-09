@@ -1,19 +1,28 @@
 package com.easy.easychat.activity;
 
 import android.app.ProgressDialog;
+
 import androidx.arch.core.executor.TaskExecutor;
+
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,18 +40,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeActivity extends AppCompatActivity {
-    private ActionBar toolbar;
-    Context context;
-    private ImageView ivNext;
-    ImageView ivLogOut;
+    private Context context;
+    private ImageView ivLogOut;
     private ViewPager viewPager;
     BottomNavigationView navigation;
     MenuItem prevMenuItem;
     private FirebaseAuth auth;
     private DatabaseReference mDatabaseReference;
-    ConversationFragment conversationFragment;
-    ContactFragment contactFragment;
-    ProfileFragment profileFragment;
+    private ConversationFragment conversationFragment;
+    private ContactFragment contactFragment;
+    private ProfileFragment profileFragment;
     private ProgressDialog progressDialog;
 
     @Override
@@ -190,6 +197,7 @@ public class HomeActivity extends AppCompatActivity {
         try {
             FirebaseAuth.getInstance().signOut();
             context.startActivity(new Intent(context, LoginWithEmailAndPassword.class));
+            PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
             finish();
             progressDialog.dismiss();
         } catch (Exception e) {
