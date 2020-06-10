@@ -23,4 +23,6 @@ public class CommonConstants {
     public static final String CHAT_USER_ID = "uid";
     public static final String MESSAGE_ID = "message_id";
     public static final String TIME_STAMP = "time_stamp";
+    public static final int SELECT_IMAGE = 0;
+    public static final String USER_PROFILE_STORAGE = "UserProfile";
 }
