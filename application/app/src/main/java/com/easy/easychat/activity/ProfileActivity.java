@@ -62,12 +62,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void initView(){
         try{
-            //userName = (TextView)findViewById(R.id.userName);
+            userName = (TextView)findViewById(R.id.userName);
             mobileNo = (TextView)findViewById(R.id.phoneNo);
             status = (TextView)findViewById(R.id.status);
 
              name = getIntent().getStringExtra(CommonConstants.USER_NAME);
              id = getIntent().getStringExtra(CommonConstants.UID);
+             userName.setText(name);
         }catch (Exception e){
             e.printStackTrace();
         }
