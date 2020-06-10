@@ -157,7 +157,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     String push_id = user_message_push.getKey();
 
-                    addToConversationDatabase(currentUserId, chatUserId, push_id, message);
+                    //addToConversationDatabase(currentUserId, chatUserId, push_id, message);
 
                     Map messageMap = new HashMap();
                     messageMap.put("message", message);
