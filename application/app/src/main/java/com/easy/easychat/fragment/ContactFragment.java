@@ -16,11 +16,18 @@ import android.widget.TextView;
 import com.easy.easychat.R;
 import com.easy.easychat.Utills.CommonConstants;
 import com.easy.easychat.activity.ChatActivity;
+import com.easy.easychat.adapter.ContactsAdapter;
+import com.easy.easychat.adapter.MessageAdapter;
+import com.easy.easychat.entity.Messages;
 import com.easy.easychat.entity.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -28,6 +35,10 @@ public class ContactFragment extends Fragment {
     private Context context;
     private RecyclerView mUsersList;
     private DatabaseReference mUsersDatabaseReference;
+    private ContactsAdapter contactsAdapter;
+    private List<User> usersList = new ArrayList<>();
+    private LinearLayoutManager mLinearLayoutManager;
+    private FirebaseAuth mAuth;
 
     @Nullable
     @Override
@@ -40,13 +51,14 @@ public class ContactFragment extends Fragment {
 
     private void initView(View view) {
         context = getActivity();
-
+        mAuth = FirebaseAuth.getInstance();
         mUsersList = (RecyclerView) view.findViewById(R.id.user_list);
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(context));
 
         mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USERS);
         mUsersDatabaseReference.keepSynced(true);
+        //getUseList();
 
     }
 
@@ -55,6 +67,7 @@ public class ContactFragment extends Fragment {
         super.onResume();
         getUsersListServiceCall();
     }
+
 
     private void getUsersListServiceCall(){
 
@@ -68,29 +81,35 @@ public class ContactFragment extends Fragment {
             @Override
             protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
 
-                viewHolder.setName(users.getUserName());
-                viewHolder.setStatus(users.getStatus());
+                    viewHolder.setName(users.getUserName());
+                    viewHolder.setStatus(users.getStatus());
 //                if (users.getImage()!=null){
 //                    viewHolder.setImage(users.getImage(), context);
 //                }
-                final String user_id = getRef(position).getKey();
-                final String userName = users.getUserName();
-
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try{
-                            Intent chatIntent = new Intent(context, ChatActivity.class);
-                            chatIntent.putExtra(CommonConstants.UID, user_id);
-                            chatIntent.putExtra(CommonConstants.USER_NAME, userName);
-                            startActivity(chatIntent);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
+                    final String user_id = getRef(position).getKey();
+                    if (user_id.equals(mAuth.getCurrentUser().getUid())){
+                        viewHolder.mView.setVisibility(View.GONE);
+                        viewHolder.mView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
                     }
-                });
-            }
+                    final String userName = users.getUserName();
+
+                    viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try{
+                                Intent chatIntent = new Intent(context, ChatActivity.class);
+                                chatIntent.putExtra(CommonConstants.UID, user_id);
+                                chatIntent.putExtra(CommonConstants.USER_NAME, userName);
+                                startActivity(chatIntent);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+                }
+
+
 
         };
         mUsersList.setAdapter(firebaseRecyclerAdapter);

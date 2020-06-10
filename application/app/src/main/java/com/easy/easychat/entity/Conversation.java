@@ -4,6 +4,10 @@ public class Conversation {
     private boolean seen;
     private long timeStamp;
 
+    public Conversation() {
+
+    }
+
     public Conversation(boolean seen, long timeStamp) {
         this.seen = seen;
         this.timeStamp = timeStamp;

@@ -6,7 +6,10 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +31,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversationFragment extends Fragment {
@@ -38,16 +48,20 @@ public class ConversationFragment extends Fragment {
     private DatabaseReference mMsgDatabase;
     private DatabaseReference mUsrDatabase;
     private String current_user_id;
+    private View mMainView;
+    public static final long MILS_IN_A_HOUR = 3600000;
+    public static final long MILS_IN_8_HOUR = 28800000;
+    public static final long MILS_IN_A_DAY = 86400000;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-        initView(view);
-        return view;
+        mMainView = inflater.inflate(R.layout.fragment_conversation, container, false);
+        initView(mMainView);
+        return mMainView;
     }
 
-    private void initView(View view) {
+    private View initView(View view) {
         context = getActivity();
        rlConversation = (RecyclerView)view.findViewById(R.id.recyclerViewConversation);
 
@@ -55,15 +69,24 @@ public class ConversationFragment extends Fragment {
 
         // current user id
        current_user_id = auth.getCurrentUser().getUid();
+       Log.d("current userId", current_user_id);
 
-      mConvDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.CHATS).child(current_user_id);
+      mConvDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.CONVERSATIONS).child(current_user_id);
       mConvDatabase.keepSynced(true);
 
-      mUsrDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USER);
+      mUsrDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USERS);
 
-     mMsgDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.MESSAGE).child(current_user_id);
+      mMsgDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.CONVERSATIONS).child(current_user_id);
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
 
+        rlConversation.setHasFixedSize(true);
+        rlConversation.setLayoutManager(linearLayoutManager);
+
+        //--RETURNING THE VIEW OF FRAGMENT--
+        return mMainView;
     }
 
     @Override
@@ -74,7 +97,7 @@ public class ConversationFragment extends Fragment {
 
     private void getConversationList(){
         // quer to get list by time stamp;
-        Query query = mConvDatabase.orderByChild("time_stamp");
+        Query query = mConvDatabase.orderByChild(CommonConstants.TIME_STAMP);
 
         FirebaseRecyclerAdapter<Conversation,ConvViewHolder> convAdapter = new FirebaseRecyclerAdapter<Conversation,ConvViewHolder>(
                 Conversation.class,
@@ -86,16 +109,24 @@ public class ConversationFragment extends Fragment {
             protected void populateViewHolder( final ConvViewHolder convViewHolder,final  Conversation conv, int position) {
 
                 final String list_user_id=getRef(position).getKey();
-                Query lastMessageQuery = mMsgDatabase.child(list_user_id).limitToLast(1);
+                Log.d("userId", list_user_id);
+                Query lastMessageQuery = mMsgDatabase.child(list_user_id);
 
                 //---IT WORKS WHENEVER CHILD OF mMessageDatabase IS CHANGED---
                 lastMessageQuery.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        List<String> mesage = new ArrayList<>();
+                        for (DataSnapshot datas : dataSnapshot.getChildren()){
+                            mesage.add(datas.getValue().toString());
+                            Log.e("last message", String.valueOf(datas.getKey()));
 
-                        String data = dataSnapshot.child("message").getValue().toString();
+                        }
+                        String data = String.valueOf(mesage.get(0));
+                        String time = String.valueOf(mesage.get(1));//String.valueOf(dataSnapshot.child(CommonConstants.CONVERSATIONS).getValue());
+                        //Log.e("last message", String.valueOf(datas.getKey()));
                         convViewHolder.setMessage(data,conv.isSeen());
-
+                        convViewHolder.setTime(time);
                     }
 
                     @Override
@@ -124,8 +155,12 @@ public class ConversationFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        final String userName = dataSnapshot.child(CommonConstants.NAME).getValue().toString();
-                        String userThumb = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
+                        final String userName = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
+                        if(dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null){
+                            String userThumb = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
+                            convViewHolder.setUserImage(userThumb,getContext());
+                        }
+
 
                         if(dataSnapshot.hasChild("online")){
 
@@ -134,7 +169,7 @@ public class ConversationFragment extends Fragment {
 
                         }
                         convViewHolder.setName(userName);
-                        convViewHolder.setUserImage(userThumb,getContext());
+
 
                         //--OPENING CHAT ACTIVITY FOR CLICKED USER----
                         convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +177,8 @@ public class ConversationFragment extends Fragment {
                             public void onClick(View v) {
 
                                 Intent chatIntent = new Intent(getContext(), ChatActivity.class);
-                                chatIntent.putExtra("user_id",list_user_id);
-                                chatIntent.putExtra("user_name",userName);
+                                chatIntent.putExtra(CommonConstants.UID,list_user_id);
+                                chatIntent.putExtra(CommonConstants.USER_NAME,userName);
                                 startActivity(chatIntent);
                             }
                         });
@@ -158,6 +193,7 @@ public class ConversationFragment extends Fragment {
 
             }
         };
+        rlConversation.setAdapter(convAdapter);
     }
 
 
@@ -189,6 +225,13 @@ public class ConversationFragment extends Fragment {
             userNameView.setText(name);
         }
 
+        public void setTime(String time){
+           long timeinLong = Long.parseLong(time);
+            TextView timeView = (TextView) mView.findViewById(R.id.chat_msg_time);
+            timeView.setText(displayTime(timeinLong));
+            Log.d("time", displayTime(timeinLong));
+        }
+
 
         public void setUserImage(String userThumb, Context context) {
 
@@ -211,5 +254,32 @@ public class ConversationFragment extends Fragment {
         }
     }
 
+    public static final String displayTime(long time) {
+        long current = System.currentTimeMillis();
+        //long current = getTime(currentTime);
+        long mills = time;
+        //d1.getTime();
 
+        if (mills <= 0) {
+            return "invalid time";
+        }
+
+        if ((current - mills) < MILS_IN_A_HOUR) {
+            return (current - mills) / (1000 * 60) + " minutes ago";
+
+        } else if ((current - mills) < MILS_IN_8_HOUR) {
+            return (current - mills) / (1000 * 60 * 60) + " hours ago";
+
+        } else if ((current - mills) < MILS_IN_A_DAY) {
+            return "today";
+
+        } else {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(mills);
+
+            return cal.get(Calendar.DAY_OF_MONTH) + " "
+                    + cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.ENGLISH);
+        }
+
+    }
 }

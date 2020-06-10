@@ -143,7 +143,7 @@ public class LoginWithEmailAndPassword extends AppCompatActivity {
                     });
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(LoginWithEmailAndPassword.this, "Wrong Credential", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginWithEmailAndPassword.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

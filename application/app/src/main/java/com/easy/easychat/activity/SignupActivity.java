@@ -30,6 +30,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class SignupActivity extends AppCompatActivity {
     private EditText etUsername, etEmail;
@@ -91,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
                         signUpServiceCall(name, email,pwd);
                     }
                 } catch (Throwable t) {
-                    throw t;
+                    t.getMessage();
                 }
 
             }
@@ -102,8 +103,10 @@ public class SignupActivity extends AppCompatActivity {
         auth.createUserWithEmailAndPassword(email,pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
                 FirebaseUser user = auth.getCurrentUser();
-                String uid = user.getUid();
+                String  uid = user.getUid();
+
                 String tokenId = FirebaseInstanceId.getInstance().getToken();
                 Map<String, String> usermap = new HashMap<>();
                 usermap.put(CommonConstants.UID, uid);

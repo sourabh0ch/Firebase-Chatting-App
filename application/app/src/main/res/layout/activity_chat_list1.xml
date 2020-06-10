@@ -62,7 +62,7 @@
 
                 <TextView
                     android:id="@+id/chat_msg_time"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="6dp"
@@ -129,7 +129,8 @@
                     android:background="@drawable/circle_msg_count"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="2dp"/>
+                    android:layout_marginBottom="2dp"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 

@@ -23,8 +23,11 @@ import android.widget.Toast;
 
 import com.easy.easychat.R;
 import com.easy.easychat.Utills.CommonConstants;
+import com.easy.easychat.Utills.SharedPrefrenceUtil;
 import com.easy.easychat.adapter.MessageAdapter;
 import com.easy.easychat.entity.Messages;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -154,12 +157,15 @@ public class ChatActivity extends AppCompatActivity {
 
                     String push_id = user_message_push.getKey();
 
+                    addToConversationDatabase(currentUserId, chatUserId, push_id, message);
+
                     Map messageMap = new HashMap();
                     messageMap.put("message", message);
                     messageMap.put("seen", false);
                     messageMap.put("type", "text");
                     messageMap.put("time", ServerValue.TIMESTAMP);
                     messageMap.put("from", currentUserId);
+                    //messageMap.put("to",chatUserId);
 
                     Map messageUserMap = new HashMap();
                     messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
@@ -183,6 +189,36 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addToConversationDatabase(String currentUserId, String chatUserId, String push_id, String message) {
+        String current_user_ref = CommonConstants.CONVERSATIONS+"/" + currentUserId + "/" + chatUserId;
+        DatabaseReference user_conv_push = mRootReference.child(CommonConstants.CONVERSATIONS)
+                .child(currentUserId).child(chatUserId).push();
+
+        Map convDataMap = new HashMap();
+        convDataMap.put(CommonConstants.CURRENT_USER_ID, currentUserId);
+        convDataMap.put(CommonConstants.CHAT_USER_ID, chatUserId);
+        //convDataMap.put(CommonConstants.MESSAGE_ID, push_id);
+        convDataMap.put(CommonConstants.MESSAGE, message);
+        convDataMap.put(CommonConstants.TIME_STAMP, ServerValue.TIMESTAMP);
+
+
+        Map convUserMap = new HashMap();
+        convUserMap.put(current_user_ref + "/" + push_id, convDataMap);
+
+        mRootReference.updateChildren(convUserMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if(databaseError != null){
+                    //Log.e("CHAT_ACTIVITY","Cannot add message to database");
+                }
+                else{
+                    //Toast.makeText(ChatActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
+                    etMessage.setText("");
+                }
+            }
+        });
     }
 
     private void loadMessage(){
@@ -288,4 +324,5 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
 }

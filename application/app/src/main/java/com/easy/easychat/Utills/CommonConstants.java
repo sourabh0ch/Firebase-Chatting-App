@@ -18,4 +18,9 @@ public class CommonConstants {
     public static final String NAME = "name";
     public static final String THUMB_IMAGE = "thumb_image";
     public static final String MESSAGES = "messages";
+    public static final String CONVERSATIONS = "conversations";
+    public static final String CURRENT_USER_ID = "uid";
+    public static final String CHAT_USER_ID = "uid";
+    public static final String MESSAGE_ID = "message_id";
+    public static final String TIME_STAMP = "time_stamp";
 }
