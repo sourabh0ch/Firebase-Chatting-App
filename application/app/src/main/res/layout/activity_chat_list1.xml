@@ -24,13 +24,13 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/circle_image_group" />
 
-            <ImageView
+           <!-- <ImageView
                 android:id="@+id/userPresence"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_alignEnd="@id/group_image"
                 android:layout_alignBottom="@id/group_image"
-                android:background="@drawable/circle_grey" />
+                android:background="@drawable/circle_grey" />-->
 
         </RelativeLayout>
 
@@ -108,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:text="Message failed to deliver"
-                    android:textColor="@color/msg_failed"
+                    android:textColor="@color/black"
                     android:layout_toRightOf="@+id/icon_layout"
                     android:layout_alignParentBottom="true"
                     android:paddingLeft="10dp"

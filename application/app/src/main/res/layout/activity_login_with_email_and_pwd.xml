@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center">
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/et_email"
@@ -19,11 +20,11 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/edit_text_shape"
             android:hint="Enter your email"
-            android:textColorHint="@color/white"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:singleLine="true"
             android:ellipsize="middle"
+            android:inputType="textEmailAddress"
             android:textSize="15sp"
             />
 
@@ -67,19 +68,33 @@
             android:textSize="19sp"/>
 
         <TextView
-            android:id="@+id/tv_register_user"
+            android:id="@+id/tv_or"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_below="@+id/btn_login"
-            android:layout_marginTop="30dp"
-            android:text="New User"
+            android:layout_marginTop="10dp"
+            android:text="Or"
             android:layout_centerVertical="true"
             android:textColor="@color/colorPrimary"
             android:gravity="center"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
-            android:textSize="20sp"/>
+            android:textSize="18sp"/>
 
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_register_user"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_below="@+id/tv_or"
+            android:layout_marginTop="10dp"
+            android:text="Register Here"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

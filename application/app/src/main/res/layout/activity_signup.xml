@@ -5,69 +5,98 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome To"
+            android:gravity="center"
+            android:textSize="40dp"
+            android:textColor="@color/color_magneta"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Easy Chat"
+            android:gravity="center"
+            android:textSize="40dp"
+            android:textColor="@color/color_magneta"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
 
     <LinearLayout
+        android:id="@+id/ll_signu_ip"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
         >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="UserName"
-            android:layout_marginTop="5dp"
-            android:textSize="20dp"
-            android:textColor="@color/color_magneta"/>
-
-        <EditText
-            android:id="@+id/etUsername"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/edit_text_shape"
-            android:ems="10"
-            android:hint= "  Pick a username"
-            android:paddingLeft="8dp"
-            android:singleLine="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textSize="15sp">
-            <requestFocus/>
-
-        </EditText>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email"
-            android:layout_marginTop="15dp"
-            android:textSize="20dp"
-            android:textColor="@color/color_magneta"/>
 
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_marginTop="5dp"
             android:background="@drawable/edit_text_shape"
             android:ems="10"
-            android:hint= "  you@example.com"
+            android:hint= "Email"
             android:paddingLeft="8dp"
             android:singleLine="true"
+            android:inputType="textEmailAddress"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+            <requestFocus/>
 
         </EditText>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password"
-            android:layout_marginTop="15dp"
-            android:textSize="20dp"
-            android:textColor="@color/color_magneta"/>
+        <EditText
+            android:id="@+id/etMobileNo"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_shape"
+            android:ems="10"
+            android:hint= "MobileNo"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:inputType="phone"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+            <requestFocus/>
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_shape"
+            android:ems="10"
+            android:hint= "Pick a username"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+
+
+        </EditText>
+
+
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etPasswordLayout"
             android:layout_width="match_parent"
@@ -87,7 +116,9 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:textSize="15sp"
-                android:singleLine="true">
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textCursorDrawable="@color/color_magneta">
 
             </com.google.android.material.textfield.TextInputEditText>
 
