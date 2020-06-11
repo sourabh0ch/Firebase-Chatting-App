@@ -24,13 +24,13 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/circle_image_group" />
 
-            <ImageView
+            <!--<ImageView
                 android:id="@+id/userPresence"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_alignEnd="@id/user_image"
                 android:layout_alignBottom="@id/user_image"
-                android:background="@drawable/circle_grey" />
+                android:background="@drawable/circle_grey" />-->
 
         </RelativeLayout>
 

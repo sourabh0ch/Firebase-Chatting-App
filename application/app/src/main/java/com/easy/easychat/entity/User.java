@@ -4,7 +4,7 @@ public class User {
     private String userName;
     private String status;
     private String image;
-    private String thumbImage;
+    private String thumb_image;
 
     public String getUserName() {
         return userName;
@@ -30,11 +30,11 @@ public class User {
         this.image = image;
     }
 
-    public String isThumbImage() {
-        return thumbImage;
+    public String getThumb_image() {
+        return thumb_image;
     }
 
-    public void setThumbImage(String thumbImage) {
-        this.thumbImage = thumbImage;
+    public void setThumb_image(String thumb_image) {
+        this.thumb_image = thumb_image;
     }
 }

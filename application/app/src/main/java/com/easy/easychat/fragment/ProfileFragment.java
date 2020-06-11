@@ -1,10 +1,11 @@
 package com.easy.easychat.fragment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -18,16 +19,19 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.easy.easychat.R;
 import com.easy.easychat.Utills.CommonConstants;
+import com.easy.easychat.entity.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,22 +40,29 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ProfileFragment extends Fragment {
     private View mMainView;
-    private TextView userName, status, mobileNo, tvHeader, tvCamera, tvGallery,tvCancel;
-    private ImageView ivLogOut, ivcamera,ivUserImage;
+    private TextView userName, status, mobileNo, tvHeader, tvCamera, tvGallery, tvCancel;
+    private ImageView ivLogOut, ivcamera;
+    private CircleImageView ivUserImage;
     private String name, id, uid;
     private Context context;
     private DatabaseReference mUsrDatabase;
     private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
     private LinearLayout llAttachmnet;
     private StorageReference mountainsRef;
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private ProgressDialog dialog;
 
     @Nullable
     @Override
@@ -65,24 +76,27 @@ public class ProfileFragment extends Fragment {
 
     private View initView(View view) {
         context = getActivity();
+        dialog = new ProgressDialog(context);
         userName = (TextView) view.findViewById(R.id.userName);
         mobileNo = (TextView) view.findViewById(R.id.phoneNo);
         status = (TextView) view.findViewById(R.id.status);
-        ivUserImage = (ImageView)view.findViewById(R.id.user_image);
+        ivUserImage = (CircleImageView) view.findViewById(R.id.user_image);
         ivcamera = (ImageView) view.findViewById(R.id.camera);
         llAttachmnet = (LinearLayout) view.findViewById(R.id.ll_attachment_option);
         tvCamera = (TextView) view.findViewById(R.id.tvCamera);
         tvGallery = (TextView) view.findViewById(R.id.tvGallery);
-        tvCancel = (TextView)view.findViewById(R.id.tvCancel);
+        tvCancel = (TextView) view.findViewById(R.id.tvCancel);
         mUsrDatabase = FirebaseDatabase.getInstance().getReference();
+
         mAuth = FirebaseAuth.getInstance();
-         uid = mAuth.getCurrentUser().getUid();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        uid = mAuth.getCurrentUser().getUid();
         mUsrDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USERS);
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
 // Create a reference to "mountains.jpg"
-         mountainsRef = storageRef.child(CommonConstants.USER_PROFILE_STORAGE+"/"+uid+".jpg");
+        mountainsRef = storageRef.child(CommonConstants.USER_PROFILE_STORAGE + "/" + uid + ".jpg");
 
 // Create a reference to 'images/mountains.jpg'
         StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
@@ -91,14 +105,14 @@ public class ProfileFragment extends Fragment {
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath());
         getUserInfo(uid);
-        getUserProfile();
+        //getUserProfile();
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getUserProfile();
+        //getUserProfile();
     }
 
     private void inflateToollbar() {
@@ -107,7 +121,6 @@ public class ProfileFragment extends Fragment {
         tvHeader = (TextView) mToolbar.findViewById(R.id.header);
         ivLogOut = (ImageView) mToolbar.findViewById(R.id.ivLogOut);
         ivLogOut.setVisibility(View.GONE);
-
     }
 
     private void getUserInfo(String uid) {
@@ -118,6 +131,8 @@ public class ProfileFragment extends Fragment {
                 userName.setText(name);
                 if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null) {
                     String userThumb = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
+                    Picasso.with(context).load(userThumb).memoryPolicy(MemoryPolicy.NO_CACHE).fit().centerInside()
+                            .placeholder(R.drawable.circle_image_group).into(ivUserImage);
                 }
             }
 
@@ -128,25 +143,31 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void getUserProfile(){
-        StorageReference islandRef = storageRef.child(CommonConstants.USER_PROFILE_STORAGE+"/"+uid+".jpg");
+    private void getUserProfile() {
 
-        final long ONE_MEGABYTE = 1024 * 1024*5;
-        islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        storageRef.child(CommonConstants.USER_PROFILE_STORAGE + "/" + uid + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onSuccess(byte[] bytes) {
-                Log.d("bitmap", bytes.toString());
-                if (bytes != null){
+            public void onSuccess(final Uri uri) {
+                mUsrDatabase.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        dataSnapshot.getRef().child(CommonConstants.THUMB_IMAGE).setValue(uri.toString());
+                        Picasso.with(context).load(uri.toString()).memoryPolicy(MemoryPolicy.NO_CACHE).fit().centerInside()
+                                .placeholder(R.drawable.circle_image_group).into(ivUserImage);
+                        dialog.dismiss();
 
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    ivUserImage.setImageBitmap(bitmap);
-                }
-
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d("User", databaseError.getMessage());
+                    }
+                });
+                // Got the download URL for 'users/me/profile.png'
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
+                Toast.makeText(context, "Failed to load the image", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -181,6 +202,9 @@ public class ProfileFragment extends Fragment {
         if (requestCode == CommonConstants.SELECT_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {
+                    dialog.setTitle("Uploading...");
+                    dialog.setProgress(ProgressDialog.STYLE_SPINNER);
+                    dialog.show();
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -191,11 +215,14 @@ public class ProfileFragment extends Fragment {
                         uploadTask.addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
+                                dialog.dismiss();
                                 Toast.makeText(getActivity(), "Upload Failed", Toast.LENGTH_SHORT).show();
                             }
                         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                updateUserProfile(taskSnapshot.getUploadSessionUri().toString());
+                                //taskSnapshot.getUploadSessionUri().toString();
                                 Toast.makeText(getActivity(), "Upload successfully", Toast.LENGTH_SHORT).show();
                                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                                 // ...
@@ -209,6 +236,25 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void updateUserProfile(final String  uploadSessionUri) {
+        getUserProfile();
+//        mUsrDatabase.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                dataSnapshot.getRef().child(CommonConstants.THUMB_IMAGE).setValue(uploadSessionUri);
+//                Picasso.with(context).load(uploadSessionUri).memoryPolicy(MemoryPolicy.NO_CACHE).fit().centerInside()
+//                        .placeholder(R.drawable.circle_image_group).into(ivUserImage);
+//                dialog.dismiss();
+//
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.d("User", databaseError.getMessage());
+//            }
+//        });
     }
 
 }

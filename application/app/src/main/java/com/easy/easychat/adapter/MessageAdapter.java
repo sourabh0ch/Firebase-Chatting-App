@@ -53,7 +53,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         // String current_user_id = mAuth.getCurrentUser().getUid();
         Messages mes = mMessagesList.get(position);
-        String from_user_id = mes.getFrom();
+        final String from_user_id = mes.getFrom();
         String message_type = mes.getType();
 
         //----CHANGING TIMESTAMP TO TIME-----
@@ -76,11 +76,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 String name = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
                 if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() !=null){
                     String image = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
-                    Picasso.with(holder.profileImage.getContext()).load(image).
-                            placeholder(R.drawable.user_profile_img).into(holder.profileImage);
+                   Picasso.with(context).load(image).placeholder(R.drawable.user_profile_img).into(holder.profileImage);
                 }
-
-
                 holder.displayName.setText(name);
 
             }

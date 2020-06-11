@@ -3,11 +3,14 @@ package com.easy.easychat.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +61,6 @@ public class ContactFragment extends Fragment {
 
         mUsersDatabaseReference = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USERS);
         mUsersDatabaseReference.keepSynced(true);
-        //getUseList();
 
     }
 
@@ -69,7 +71,7 @@ public class ContactFragment extends Fragment {
     }
 
 
-    private void getUsersListServiceCall(){
+    private void getUsersListServiceCall() {
 
         FirebaseRecyclerAdapter<User, UserViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(
                 User.class,
@@ -80,35 +82,31 @@ public class ContactFragment extends Fragment {
 
             @Override
             protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
-
-                    viewHolder.setName(users.getUserName());
-                    viewHolder.setStatus(users.getStatus());
-//                if (users.getImage()!=null){
-//                    viewHolder.setImage(users.getImage(), context);
-//                }
-                    final String user_id = getRef(position).getKey();
-                    if (user_id.equals(mAuth.getCurrentUser().getUid())){
-                        viewHolder.mView.setVisibility(View.GONE);
-                        viewHolder.mView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-                    }
-                    final String userName = users.getUserName();
-
-                    viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try{
-                                Intent chatIntent = new Intent(context, ChatActivity.class);
-                                chatIntent.putExtra(CommonConstants.UID, user_id);
-                                chatIntent.putExtra(CommonConstants.USER_NAME, userName);
-                                startActivity(chatIntent);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-
-                        }
-                    });
+                viewHolder.setName(users.getUserName());
+                viewHolder.setStatus(users.getStatus());
+                viewHolder.setImage(users.getThumb_image(), context);
+                final String user_id = getRef(position).getKey();
+                if (user_id.equals(mAuth.getCurrentUser().getUid())) {
+                    viewHolder.mView.setVisibility(View.GONE);
+                    viewHolder.mView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
                 }
+                final String userName = users.getUserName();
 
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            Intent chatIntent = new Intent(context, ChatActivity.class);
+                            chatIntent.putExtra(CommonConstants.UID, user_id);
+                            chatIntent.putExtra(CommonConstants.USER_NAME, userName);
+                            startActivity(chatIntent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+            }
 
 
         };
@@ -138,7 +136,7 @@ public class ContactFragment extends Fragment {
         public void setImage(String thumb_image, Context ctx) {
             CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.user_image);
             //Log.e("thumb URL is--- ",thumb_image);
-            if(thumb_image!=null) {
+            if (thumb_image != null) {
                 Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.circle_image_group).into(userImageView);
             }
         }

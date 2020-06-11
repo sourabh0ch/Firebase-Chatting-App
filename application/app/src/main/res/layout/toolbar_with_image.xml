@@ -20,7 +20,7 @@
             android:layout_centerVertical="true"
             />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/hdr_img_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"

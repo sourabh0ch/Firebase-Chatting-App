@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,13 +18,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easy.easychat.R;
+import com.easy.easychat.Utills.AppUtills;
 import com.easy.easychat.Utills.CommonConstants;
 import com.easy.easychat.activity.ChatActivity;
 import com.easy.easychat.entity.Conversation;
 import com.easy.easychat.entity.Messages;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +37,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -53,6 +62,9 @@ public class ConversationFragment extends Fragment {
     private String current_user_id;
     private View mMainView;
     private ProgressDialog progressBar;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+    private CircleImageView userImageView;
     public static final long MILS_IN_A_HOUR = 3600000;
     public static final long MILS_IN_8_HOUR = 28800000;
     public static final long MILS_IN_A_DAY = 86400000;
@@ -103,6 +115,9 @@ public class ConversationFragment extends Fragment {
     }
 
     private void getConversationList() {
+        progressBar.setTitle("Fetching Conversations...");
+        progressBar.setProgress(ProgressDialog.STYLE_SPINNER);
+        progressBar.show();
         // quer to get list by time stamp;
         Query query = mMsgDatabase.orderByChild(CommonConstants.TIME_STAMP);
 
@@ -163,11 +178,12 @@ public class ConversationFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         final String userName = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
+                        String userThumb= null;
                         if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null) {
-                            String userThumb = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
-                            convViewHolder.setUserImage(userThumb, getContext());
+                            String userThumbImg = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
+                            convViewHolder.setUserImage(userThumbImg, getContext());
+                            userThumb = userThumbImg;
                         }
-
 
                         if (dataSnapshot.hasChild("online")) {
 
@@ -177,8 +193,9 @@ public class ConversationFragment extends Fragment {
                         }
                         convViewHolder.setName(userName);
 
-
+                        progressBar.dismiss();
                         //--OPENING CHAT ACTIVITY FOR CLICKED USER----
+                        final String finalUserThumb = userThumb;
                         convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -186,6 +203,7 @@ public class ConversationFragment extends Fragment {
                                 Intent chatIntent = new Intent(getContext(), ChatActivity.class);
                                 chatIntent.putExtra(CommonConstants.UID, list_user_id);
                                 chatIntent.putExtra(CommonConstants.USER_NAME, userName);
+                                chatIntent.putExtra(CommonConstants.THUMB_IMAGE, finalUserThumb);
                                 startActivity(chatIntent);
                             }
                         });
@@ -201,9 +219,7 @@ public class ConversationFragment extends Fragment {
             }
         };
         rlConversation.setAdapter(convAdapter);
-        progressBar.dismiss();
     }
-
 
     public static class ConvViewHolder extends RecyclerView.ViewHolder {
 
@@ -240,31 +256,27 @@ public class ConversationFragment extends Fragment {
         }
 
 
-        public void setUserImage(String userThumb, Context context) {
-
-            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.group_image);
-
+        public void setUserImage(String userProfile, final Context context) {
             //--SETTING IMAGE FROM USERTHUMB TO USERIMAGEVIEW--- IF ERRORS OCCUR , ADD USER_IMG----
-            Picasso.with(context).load(userThumb).placeholder(R.drawable.circle_image_group).into(userImageView);
+            final CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.group_image);
+            Picasso.with(context).load(userProfile).placeholder(R.drawable.circle_image_group).into(userImageView);
         }
 
 
         public void setUserOnline(String onlineStatus) {
 
-            ImageView userOnlineView = (ImageView) mView.findViewById(R.id.userPresence);
-            if (onlineStatus.equals("true")) {
-                userOnlineView.setVisibility(View.VISIBLE);
-            } else {
-                userOnlineView.setVisibility(View.INVISIBLE);
-            }
+            //ImageView userOnlineView = (ImageView) mView.findViewById(R.id.userPresence);
+//            if (onlineStatus.equals("true")) {
+//                userOnlineView.setVisibility(View.VISIBLE);
+//            } else {
+//                userOnlineView.setVisibility(View.INVISIBLE);
+//            }
         }
     }
 
     public static final String displayTime(long time) {
         long current = System.currentTimeMillis();
-        //long current = getTime(currentTime);
         long mills = time;
-        //d1.getTime();
 
         if (mills <= 0) {
             return "invalid time";
