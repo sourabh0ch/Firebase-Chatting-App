@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SignupActivity extends AppCompatActivity {
-    private EditText etUsername, etEmail;
+    private EditText etUsername, etEmail,etMobileNo;
     private TextInputEditText etPassword;
     private Button btnSignUp;
     private Context context;
@@ -55,6 +55,7 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         etUsername = (EditText) findViewById(R.id.etUsername);
         etEmail = (EditText) findViewById(R.id.etEmail);
+        etMobileNo = (EditText)findViewById(R.id.etMobileNo);
         etPassword = (TextInputEditText) findViewById(R.id.etPassword);
         btnSignUp = (Button) findViewById(R.id.btnsignup);
         etPassword.setTransformationMethod(new PasswordTransformationMethod());
@@ -73,14 +74,17 @@ public class SignupActivity extends AppCompatActivity {
                     String name = etUsername.getText().toString();
                     String email = etEmail.getText().toString();
                     String pwd = etPassword.getText().toString();
+                    String mobileNo = etMobileNo.getText().toString();
 
                     if (name.isEmpty()) {
                         Toast.makeText(SignupActivity.this, "please fill the name field", Toast.LENGTH_SHORT).show();
                     } else if (email.isEmpty()) {
                         Toast.makeText(SignupActivity.this, "please fill the email field", Toast.LENGTH_SHORT).show();
                     } else if (pwd.isEmpty()) {
-                        Toast.makeText(SignupActivity.this, "please fill the email field", Toast.LENGTH_SHORT).show();
-                    } else {
+                        Toast.makeText(SignupActivity.this, "please fill the password field", Toast.LENGTH_SHORT).show();
+                    }  else if (mobileNo.isEmpty()) {
+                        Toast.makeText(SignupActivity.this, "please fill the mobileNo field", Toast.LENGTH_SHORT).show();
+                    }else {
                         progressDialog.setTitle("Signing in");
                         progressDialog.setMessage("Please wait while Signing in");
                         progressDialog.setCancelable(false);
@@ -89,7 +93,7 @@ public class SignupActivity extends AppCompatActivity {
                         etUsername.getText().clear();
                         etEmail.getText().clear();
                         etPassword.getText().clear();
-                        signUpServiceCall(name, email,pwd);
+                        signUpServiceCall(name, email,pwd, mobileNo);
                     }
                 } catch (Throwable t) {
                     t.getMessage();
@@ -99,7 +103,7 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void signUpServiceCall(final String name, final String email,final String pwd) {
+    private void signUpServiceCall(final String name, final String email, final String pwd, final String mobileNo) {
         auth.createUserWithEmailAndPassword(email,pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -115,7 +119,9 @@ public class SignupActivity extends AppCompatActivity {
                 usermap.put(CommonConstants.EMAIL, email);
                 usermap.put(CommonConstants.PASSWORD, pwd);
                 usermap.put(CommonConstants.STATUS, "true");
-                usermap.put(CommonConstants.USER_IMAGE, "");
+                usermap.put(CommonConstants.THUMB_IMAGE, "");
+                usermap.put(CommonConstants.PROFILE_STATUS, "");
+                usermap.put(CommonConstants.MOBILE_NO, mobileNo);
 
                 mDatabaseReference.child(uid).setValue(usermap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

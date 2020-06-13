@@ -31,7 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
     AppBarLayout appBarLayout;
     private TextView userName, status, mobileNo, tvHeader;
-    private ImageView ivLogOut;
+    private ImageView ivLogOut, ivcamera;
     private String name, id, userImg;
     private StorageReference mountainsRef;
     private FirebaseStorage storage;
@@ -82,6 +82,8 @@ public class ProfileActivity extends AppCompatActivity {
             mobileNo = (TextView) findViewById(R.id.phoneNo);
             status = (TextView) findViewById(R.id.status);
             ivUserImage = (CircleImageView) findViewById(R.id.user_image);
+            ivcamera = (ImageView) findViewById(R.id.camera);
+            ivcamera.setVisibility(View.GONE);
             name = getIntent().getStringExtra(CommonConstants.USER_NAME);
             id = getIntent().getStringExtra(CommonConstants.UID);
             userImg = getIntent().getStringExtra(CommonConstants.THUMB_IMAGE);

@@ -115,9 +115,9 @@ public class ConversationFragment extends Fragment {
     }
 
     private void getConversationList() {
-        progressBar.setTitle("Fetching Conversations...");
-        progressBar.setProgress(ProgressDialog.STYLE_SPINNER);
-        progressBar.show();
+//        progressBar.setTitle("Fetching Conversations...");
+//        progressBar.setProgress(ProgressDialog.STYLE_SPINNER);
+//        progressBar.show();
         // quer to get list by time stamp;
         Query query = mMsgDatabase.orderByChild(CommonConstants.TIME_STAMP);
 
@@ -138,17 +138,23 @@ public class ConversationFragment extends Fragment {
                 lastMessageQuery.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Map<String, String> mesage = new HashMap<String, String>();
-                        for (DataSnapshot datas : dataSnapshot.getChildren()) {
-                            mesage.put(datas.getKey(), datas.getValue().toString());
-                        }
-                        List<String> mesg = new ArrayList<>();
-                        for (String m : mesage.values()) {
-                            mesg.add(m);
-                        }
+                        if (dataSnapshot.getValue() ==null){
+                            progressBar.dismiss();
+                        }else{
+                            Map<String, String> mesage = new HashMap<String, String>();
+                            for (DataSnapshot datas : dataSnapshot.getChildren()) {
+                                mesage.put(datas.getKey(), datas.getValue().toString());
+                            }
+                            List<String> mesg = new ArrayList<>();
+                            for (String m : mesage.values()) {
+                                mesg.add(m);
+                            }
 
-                        convViewHolder.setMessage(mesg.get(2), conv.isSeen());
-                        convViewHolder.setTime(mesg.get(1).toString());
+                            convViewHolder.setMessage(mesg.get(2), conv.isSeen());
+                            convViewHolder.setTime(mesg.get(1).toString());
+                        }
+                        progressBar.dismiss();
+
                     }
 
                     @Override
@@ -168,7 +174,7 @@ public class ConversationFragment extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        progressBar.dismiss();
                     }
                 });
 
@@ -177,36 +183,42 @@ public class ConversationFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        final String userName = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
-                        String userThumb= null;
-                        if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null) {
-                            String userThumbImg = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
-                            convViewHolder.setUserImage(userThumbImg, getContext());
-                            userThumb = userThumbImg;
-                        }
-
-                        if (dataSnapshot.hasChild("online")) {
-
-                            String userOnline = dataSnapshot.child("online").getValue().toString();
-                            convViewHolder.setUserOnline(userOnline);
-
-                        }
-                        convViewHolder.setName(userName);
-
-                        progressBar.dismiss();
-                        //--OPENING CHAT ACTIVITY FOR CLICKED USER----
-                        final String finalUserThumb = userThumb;
-                        convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                Intent chatIntent = new Intent(getContext(), ChatActivity.class);
-                                chatIntent.putExtra(CommonConstants.UID, list_user_id);
-                                chatIntent.putExtra(CommonConstants.USER_NAME, userName);
-                                chatIntent.putExtra(CommonConstants.THUMB_IMAGE, finalUserThumb);
-                                startActivity(chatIntent);
+                        if (dataSnapshot.getValue() == null){
+                            //Toast.makeText(context, "No Data found", Toast.LENGTH_SHORT).show();
+                        }else{
+                            final String userName = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
+                            String userThumb= null;
+                            if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null) {
+                                String userThumbImg = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
+                                convViewHolder.setUserImage(userThumbImg, getContext());
+                                userThumb = userThumbImg;
                             }
-                        });
+
+                            if (dataSnapshot.hasChild("online")) {
+
+                                String userOnline = dataSnapshot.child("online").getValue().toString();
+                                convViewHolder.setUserOnline(userOnline);
+
+                            }
+                            convViewHolder.setName(userName);
+
+                            progressBar.dismiss();
+                            //--OPENING CHAT ACTIVITY FOR CLICKED USER----
+                            final String finalUserThumb = userThumb;
+                            convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Intent chatIntent = new Intent(getContext(), ChatActivity.class);
+                                    chatIntent.putExtra(CommonConstants.UID, list_user_id);
+                                    chatIntent.putExtra(CommonConstants.USER_NAME, userName);
+                                    chatIntent.putExtra(CommonConstants.THUMB_IMAGE, finalUserThumb);
+                                    startActivity(chatIntent);
+                                }
+                            });
+                        }
+
+
                     }
 
                     @Override

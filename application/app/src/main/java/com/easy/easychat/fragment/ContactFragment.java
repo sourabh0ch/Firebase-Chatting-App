@@ -81,7 +81,7 @@ public class ContactFragment extends Fragment {
         ) {
 
             @Override
-            protected void populateViewHolder(UserViewHolder viewHolder, User users, int position) {
+            protected void populateViewHolder(UserViewHolder viewHolder, final User users, int position) {
                 viewHolder.setName(users.getUserName());
                 viewHolder.setStatus(users.getStatus());
                 viewHolder.setImage(users.getThumb_image(), context);
@@ -99,6 +99,7 @@ public class ContactFragment extends Fragment {
                             Intent chatIntent = new Intent(context, ChatActivity.class);
                             chatIntent.putExtra(CommonConstants.UID, user_id);
                             chatIntent.putExtra(CommonConstants.USER_NAME, userName);
+                            chatIntent.putExtra(CommonConstants.THUMB_IMAGE, users.getThumb_image());
                             startActivity(chatIntent);
                         } catch (Exception e) {
                             e.printStackTrace();

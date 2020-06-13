@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_update_user_profile);
         proceed();
 
     }
@@ -54,16 +54,16 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(contentIntent);
             finish();
         }else {
-            setContentView(R.layout.activity_login);
+            setContentView(R.layout.activity_update_user_profile);
             initView();
             initOnClckListener();
         }
     }
 
     private void  initView(){
-        etMobileNo = (EditText)findViewById(R.id.et_mob_no);
+        etMobileNo = (EditText)findViewById(R.id.et_update_mobileNo);
         btnLogin = (Button)findViewById(R.id.btn_login);
-        btnGenerateOtp = (Button)findViewById(R.id.btn_generate_otp);
+        //btnGenerateOtp = (Button)findViewById(R.id.btn_generate_otp);
         progressDialog = new ProgressDialog(this);
         auth = FirebaseAuth.getInstance();
     }

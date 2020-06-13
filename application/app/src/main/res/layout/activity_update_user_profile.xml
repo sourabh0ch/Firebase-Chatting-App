@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/rapport_white">
+
+    <LinearLayout
+        android:id="@+id/ll_signu_ip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        >
+
+        <EditText
+            android:id="@+id/et_update_email"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/edit_text_shape"
+            android:ems="10"
+            android:hint= "Email"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:inputType="textEmailAddress"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+            <requestFocus/>
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/et_update_mobileNo"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_shape"
+            android:ems="10"
+            android:hint= "MobileNo"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:inputType="phone"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+            <requestFocus/>
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/et_update_username"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_shape"
+            android:ems="10"
+            android:hint= "Pick a username"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+        </EditText>
+
+        <EditText
+            android:id="@+id/et_update_profile_status"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_shape"
+            android:ems="10"
+            android:hint= "Status"
+            android:paddingLeft="8dp"
+            android:singleLine="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textCursorDrawable="@color/color_magneta">
+        </EditText>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            >
+
+            <Button
+                android:id="@+id/btnUpdate"
+                android:layout_width="140dp"
+                android:layout_height="37dp"
+                android:layout_margin="5dp"
+                android:text="Update"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_shape"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

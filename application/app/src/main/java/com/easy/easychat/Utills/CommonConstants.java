@@ -8,6 +8,7 @@ public class CommonConstants {
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String STATUS = "status";
+    public static final String PROFILE_STATUS = "profileStatus";
     public static final String USER_IMAGE = "image";
     public static final String USER = "user";
     public static final String USERS = "user";
