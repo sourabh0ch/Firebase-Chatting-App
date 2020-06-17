@@ -60,7 +60,7 @@ public class SignupActivity extends AppCompatActivity {
         btnSignUp = (Button) findViewById(R.id.btnsignup);
         etPassword.setTransformationMethod(new PasswordTransformationMethod());
         auth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USER);
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USERS);
         mDatabaseReference.keepSynced(true);
     }
 
@@ -120,7 +120,7 @@ public class SignupActivity extends AppCompatActivity {
                 usermap.put(CommonConstants.PASSWORD, pwd);
                 usermap.put(CommonConstants.STATUS, "true");
                 usermap.put(CommonConstants.THUMB_IMAGE, "");
-                usermap.put(CommonConstants.PROFILE_STATUS, "");
+                usermap.put(CommonConstants.PROFILE_STATUS, "Busy");
                 usermap.put(CommonConstants.MOBILE_NO, mobileNo);
 
                 mDatabaseReference.child(uid).setValue(usermap).addOnCompleteListener(new OnCompleteListener<Void>() {

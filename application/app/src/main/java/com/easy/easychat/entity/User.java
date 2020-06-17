@@ -3,7 +3,8 @@ package com.easy.easychat.entity;
 public class User {
     private String userName;
     private String status;
-    private String image;
+    private String profileStatus;
+    private String mobileNo;
     private String thumb_image;
 
     public String getUserName() {
@@ -22,12 +23,12 @@ public class User {
         this.status = status;
     }
 
-    public String getImage() {
-        return image;
+    public String getMobileNo() {
+        return mobileNo;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
 
     public String getThumb_image() {
@@ -36,5 +37,13 @@ public class User {
 
     public void setThumb_image(String thumb_image) {
         this.thumb_image = thumb_image;
+    }
+
+    public String getProfileStatus() {
+        return profileStatus;
+    }
+
+    public void setProfileStatus(String profileStatus) {
+        this.profileStatus = profileStatus;
     }
 }

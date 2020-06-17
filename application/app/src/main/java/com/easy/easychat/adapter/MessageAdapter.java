@@ -1,6 +1,8 @@
 package com.easy.easychat.adapter;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +51,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull final MessageAdapter.MessageViewHolder holder, int position) {
-
-
         // String current_user_id = mAuth.getCurrentUser().getUid();
         Messages mes = mMessagesList.get(position);
         final String from_user_id = mes.getFrom();
@@ -73,13 +73,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 String name = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
-                if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() !=null){
+                if (!TextUtils.isEmpty(dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString())){
                     String image = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
                    Picasso.with(context).load(image).placeholder(R.drawable.user_profile_img).into(holder.profileImage);
                 }
                 holder.displayName.setText(name);
-
             }
 
             @Override
