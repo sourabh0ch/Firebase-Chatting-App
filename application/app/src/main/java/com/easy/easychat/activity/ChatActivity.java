@@ -2,6 +2,7 @@ package com.easy.easychat.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -53,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton ivAttach, ivSend;
     private TextView tvHeader;
     private EditText etMessage;
-    private String chatUsername, chatUserId, chatUserImg,currentUserId, currentUsername;
+    private String chatUsername, chatUserId, chatUserImg,chatUserMobileNo, chatUserProfileStatus, currentUserId, currentUsername;
     private RecyclerView rvMessasge;
     public static final int TOTAL_ITEM_TO_LOAD = 10;
     private int mCurrentPage = 1;
@@ -105,6 +106,9 @@ public class ChatActivity extends AppCompatActivity {
         chatUsername = getIntent().getStringExtra(CommonConstants.USER_NAME);
         chatUserId = getIntent().getStringExtra(CommonConstants.UID);
         chatUserImg = getIntent().getStringExtra(CommonConstants.THUMB_IMAGE);
+        chatUserMobileNo = getIntent().getStringExtra(CommonConstants.MOBILE_NO);
+        chatUserProfileStatus = getIntent().getStringExtra(CommonConstants.PROFILE_STATUS);
+
         tvHeader.setText(chatUsername);
         rvMessasge = (RecyclerView) findViewById(R.id.rvMesages);
 
@@ -134,6 +138,8 @@ public class ChatActivity extends AppCompatActivity {
                 profileIntent.putExtra(CommonConstants.UID, chatUserId);
                 profileIntent.putExtra(CommonConstants.USER_NAME, chatUsername);
                 profileIntent.putExtra(CommonConstants.THUMB_IMAGE, chatUserImg);
+                profileIntent.putExtra(CommonConstants.PROFILE_STATUS, chatUserProfileStatus);
+                profileIntent.putExtra(CommonConstants.MOBILE_NO, chatUserMobileNo);
                 startActivity(profileIntent);
             }
         });
@@ -168,8 +174,6 @@ public class ChatActivity extends AppCompatActivity {
 
                     String push_id = user_message_push.getKey();
 
-                    //addToConversationDatabase(currentUserId, chatUserId, push_id, message);
-
                     Map messageMap = new HashMap();
                     messageMap.put("message", message);
                     messageMap.put("seen", false);
@@ -185,11 +189,12 @@ public class ChatActivity extends AppCompatActivity {
                     mRootReference.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            final MediaPlayer player = MediaPlayer.create(context, R.raw.ring);
                             if (databaseError != null) {
                                 Log.e("CHAT_ACTIVITY", "Cannot add message to database");
                             } else {
-                                Toast.makeText(ChatActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
                                 etMessage.setText("");
+                                player.start();
                             }
                         }
                     });
