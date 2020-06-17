@@ -1,10 +1,12 @@
 package com.easy.easychat.activity;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,14 +32,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
     AppBarLayout appBarLayout;
-    private TextView userName, status, mobileNo, tvHeader;
+    private TextView userName, tvStatus, tvMobileNo, tvHeader;
     private ImageView ivLogOut, ivcamera;
-    private String name, id, userImg;
+    private String name, id, userImg, mobileNo, profileStatus;
     private StorageReference mountainsRef;
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private Context context;
     private CircleImageView ivUserImage;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -79,39 +82,43 @@ public class ProfileActivity extends AppCompatActivity {
         try {
             context = ProfileActivity.this;
             userName = (TextView) findViewById(R.id.userName);
-            mobileNo = (TextView) findViewById(R.id.phoneNo);
-            status = (TextView) findViewById(R.id.status);
+            tvMobileNo = (TextView) findViewById(R.id.phoneNo);
+            tvStatus = (TextView) findViewById(R.id.status);
             ivUserImage = (CircleImageView) findViewById(R.id.user_image);
             ivcamera = (ImageView) findViewById(R.id.camera);
             ivcamera.setVisibility(View.GONE);
+            progressBar = (ProgressBar) findViewById(R.id.ProgressBar);
+            Drawable draw = getResources().getDrawable(R.drawable.custom_progress_bar);
+            // set the drawable as progress drawable
+            progressBar.setProgressDrawable(draw);
+            progressBar.setVisibility(View.INVISIBLE);
             name = getIntent().getStringExtra(CommonConstants.USER_NAME);
             id = getIntent().getStringExtra(CommonConstants.UID);
             userImg = getIntent().getStringExtra(CommonConstants.THUMB_IMAGE);
+            mobileNo = getIntent().getStringExtra(CommonConstants.MOBILE_NO);
+            profileStatus = getIntent().getStringExtra(CommonConstants.PROFILE_STATUS);
             userName.setText(name);
+            tvStatus.setText(profileStatus);
+            tvMobileNo.setText(mobileNo);
             storage = FirebaseStorage.getInstance();
             storageRef = storage.getReference();
-            Picasso.with(context).load(userImg).fit().centerInside()
-                    .placeholder(R.drawable.circle_image_group).into(ivUserImage);
-            getUserProfile();
+            progressBar.setVisibility(View.VISIBLE);
+            Picasso.with(context).load(userImg).memoryPolicy(MemoryPolicy.NO_CACHE).fit().centerInside()
+                    .into(ivUserImage, new com.squareup.picasso.Callback() {
+                        @Override
+                        public void onSuccess() {
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            progressBar.setVisibility(View.GONE);
+                            //do something when there is picture loading error
+                        }
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-    }
-
-    private void getUserProfile() {
-
-        storageRef.child(CommonConstants.USER_PROFILE_STORAGE + "/" + id + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-
-                // Got the download URL for 'users/me/profile.png'
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(context, "Failed to load the image", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
