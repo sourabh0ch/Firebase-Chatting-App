@@ -134,7 +134,7 @@ public class ChatActivity extends AppCompatActivity {
         tvHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent profileIntent = new Intent(ChatActivity.this, ProfileActivity.class);
+                Intent profileIntent = new Intent(ChatActivity.this, NewProfileActivity.class);
                 profileIntent.putExtra(CommonConstants.UID, chatUserId);
                 profileIntent.putExtra(CommonConstants.USER_NAME, chatUsername);
                 profileIntent.putExtra(CommonConstants.THUMB_IMAGE, chatUserImg);

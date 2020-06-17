@@ -13,6 +13,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="CustomToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <!-- HERE ARE THE CHANGES - Change color of different texts -->
+        <item name="android:textColorPrimary">@color/rapport_white</item>
+        <item name="colorControlNormal">@color/toolbar_color</item>
+    </style>
+
 
 <!--    <style name="ViewLine">-->
 <!--       <item name="android:layout_weight">match_parent</item>-->
