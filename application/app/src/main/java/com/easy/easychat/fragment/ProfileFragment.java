@@ -2,7 +2,6 @@ package com.easy.easychat.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,20 +25,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 
 import com.easy.easychat.R;
 import com.easy.easychat.Utills.CommonConstants;
-import com.easy.easychat.activity.SignupActivity;
+import com.easy.easychat.activity.ImageViewActivity;
 import com.easy.easychat.activity.UpdateProfileActivity;
-import com.easy.easychat.entity.User;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,8 +51,6 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -63,7 +60,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvUserName, tvStatus, tvMobileNo, tvHeader, tvCamera, tvGallery, tvCancel;
     private ImageView ivLogOut, ivcamera, ivPencil;
     private CircleImageView ivUserImage;
-    private String name, email, uid, profileStatus, mobileNo;
+    private String name, email, uid, profileStatus, mobileNo, tokenId, thumbUrl, pwd, status;
     private Context context;
     private DatabaseReference mUsrDatabase;
     private FirebaseAuth mAuth;
@@ -73,7 +70,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private ProgressDialog dialog;
-    private ProgressBar progressBar;    
+    private ProgressBar progressBar;
     private boolean isLayoutShown;
 
     @Nullable
@@ -131,6 +128,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        getUserInfo(uid);
     }
 
     private void inflateToollbar() {
@@ -147,15 +145,30 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 name = Objects.requireNonNull(dataSnapshot.child(CommonConstants.USER_NAME).getValue()).toString();
                 tvUserName.setText(name);
-                if (dataSnapshot.child(CommonConstants.MOBILE_NO).getValue() != null){
+                if (dataSnapshot.child(CommonConstants.MOBILE_NO).getValue() != null) {
                     mobileNo = dataSnapshot.child(CommonConstants.MOBILE_NO).getValue().toString();
+                    tvMobileNo.setText(mobileNo);
                 }
 
-                if (dataSnapshot.child(CommonConstants.PROFILE_STATUS).getValue() != null){
+                if (dataSnapshot.child(CommonConstants.PROFILE_STATUS).getValue() != null) {
                     profileStatus = dataSnapshot.child(CommonConstants.PROFILE_STATUS).getValue().toString();
+                    tvStatus.setText(profileStatus);
                 }
                 email = dataSnapshot.child(CommonConstants.EMAIL).getValue().toString();
+                if (dataSnapshot.child(CommonConstants.TOKEN_ID).getValue() != null) {
+                    tokenId = dataSnapshot.child(CommonConstants.TOKEN_ID).getValue().toString();
+                }
+
                 if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null) {
+                    thumbUrl = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
+                }
+                if (dataSnapshot.child(CommonConstants.STATUS).getValue() != null) {
+                    status = dataSnapshot.child(CommonConstants.STATUS).getValue().toString();
+                }
+                if (dataSnapshot.child(CommonConstants.PASSWORD).getValue() != null) {
+                    pwd = dataSnapshot.child(CommonConstants.PASSWORD).getValue().toString();
+                }
+                if (!TextUtils.isEmpty(dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString())) {
                     String userThumb = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
                     progressBar.setVisibility(View.VISIBLE);
                     Picasso.with(context).load(userThumb).memoryPolicy(MemoryPolicy.NO_CACHE).fit().centerInside()
@@ -232,6 +245,25 @@ public class ProfileFragment extends Fragment {
                 doLayoutWork();
             }
         });
+        ivUserImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+
+                    Intent intent = new Intent(context, ImageViewActivity.class);
+                    intent.putExtra(CommonConstants.THUMB_IMAGE, thumbUrl);
+                    intent.putExtra(CommonConstants.USER_NAME, name);
+
+                    Pair<View, String> bodyPair = Pair.create(view, thumbUrl);
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(((Activity)context), bodyPair);
+
+                    ActivityCompat.startActivity(context, intent, options.toBundle());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         ivPencil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -240,6 +272,10 @@ public class ProfileFragment extends Fragment {
                 i.putExtra(CommonConstants.EMAIL, email);
                 i.putExtra(CommonConstants.USER_NAME, name);
                 i.putExtra(CommonConstants.MOBILE_NO, mobileNo);
+                i.putExtra(CommonConstants.TOKEN_ID, tokenId);
+                i.putExtra(CommonConstants.STATUS, status);
+                i.putExtra(CommonConstants.PASSWORD, pwd);
+                i.putExtra(CommonConstants.THUMB_IMAGE, thumbUrl);
                 i.putExtra(CommonConstants.PROFILE_STATUS, profileStatus);
                 startActivity(i);
             }
@@ -247,26 +283,12 @@ public class ProfileFragment extends Fragment {
         tvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<String> num = new ArrayList<>();
-                num.add("917877240861");
-                num.add("918502060293");
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-                sendIntent.putExtra("jid", "917877240861" + "@s.whatsapp.net");
-                sendIntent.putExtra("jid", "918502060293" + "@s.whatsapp.net");
-                sendIntent.setPackage("com.whatsapp");
-                sendIntent.setType("text/plain");
-                try {
-                    startActivity(sendIntent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "not found", Toast.LENGTH_SHORT).show();
-                }
-
+                llAttachmnet.setVisibility(View.GONE);
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, CommonConstants.CAMERA_PIC_REQUEST);
             }
         });
+
         ivcamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -313,27 +335,7 @@ public class ProfileFragment extends Fragment {
                     dialog.show();
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] datas = baos.toByteArray();
-
-                        UploadTask uploadTask = mountainsRef.putBytes(datas);
-                        uploadTask.addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                dialog.dismiss();
-                                Toast.makeText(getActivity(), "Upload Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                updateUserProfile(taskSnapshot.getUploadSessionUri().toString());
-                                //taskSnapshot.getUploadSessionUri().toString();
-                                Toast.makeText(getActivity(), "Upload successfully", Toast.LENGTH_SHORT).show();
-                                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                                // ...
-                            }
-                        });
+                        uploadProfileImage(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -341,7 +343,41 @@ public class ProfileFragment extends Fragment {
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == CommonConstants.CAMERA_PIC_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data != null) {
+                    dialog.setTitle("Uploading...");
+                    dialog.setProgress(ProgressDialog.STYLE_SPINNER);
+                    dialog.show();
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    ;
+                    uploadProfileImage(bitmap);
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private void uploadProfileImage(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] datas = baos.toByteArray();
+
+        UploadTask uploadTask = mountainsRef.putBytes(datas);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                dialog.dismiss();
+                Toast.makeText(getActivity(), "Upload Failed", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                updateUserProfile(taskSnapshot.getUploadSessionUri().toString());
+                Toast.makeText(getActivity(), "Upload successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updateUserProfile(final String uploadSessionUri) {
