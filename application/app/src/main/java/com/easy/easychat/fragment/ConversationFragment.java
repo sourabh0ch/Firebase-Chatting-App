@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,11 +14,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,10 +65,11 @@ public class ConversationFragment extends Fragment {
     private DatabaseReference mConvDatabase, mMsgDatabase, mUsrDatabase;
     private String current_user_id;
     private View mMainView;
-    private ProgressDialog progressBar;
+    private ProgressDialog progressDialog;
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private CircleImageView userImageView;
+    private ProgressBar progressBar;
     public static final long MILS_IN_A_HOUR = 3600000;
     public static final long MILS_IN_8_HOUR = 28800000;
     public static final long MILS_IN_A_DAY = 86400000;
@@ -80,7 +85,6 @@ public class ConversationFragment extends Fragment {
 
     private View initView(View view) {
         context = getActivity();
-        progressBar = new ProgressDialog(context);
         rlConversation = (RecyclerView) view.findViewById(R.id.recyclerViewConversation);
 
         auth = FirebaseAuth.getInstance();
@@ -98,7 +102,6 @@ public class ConversationFragment extends Fragment {
 
         rlConversation.setHasFixedSize(true);
         rlConversation.setLayoutManager(linearLayoutManager);
-
         //--RETURNING THE VIEW OF FRAGMENT--
         return mMainView;
     }
@@ -119,8 +122,9 @@ public class ConversationFragment extends Fragment {
 //        progressBar.setProgress(ProgressDialog.STYLE_SPINNER);
 //        progressBar.show();
         // quer to get list by time stamp;
-        Query query = mMsgDatabase.orderByChild(CommonConstants.TIME_STAMP);
-
+        //progressBar.setVisibility(View.VISIBLE);
+        Query query = mMsgDatabase.orderByChild(CommonConstants.TIME);
+        final MediaPlayer player = MediaPlayer.create(context, R.raw.ring);
         FirebaseRecyclerAdapter<Conversation, ConvViewHolder> convAdapter = new FirebaseRecyclerAdapter<Conversation, ConvViewHolder>(
                 Conversation.class,
                 R.layout.activity_chat_list1,
@@ -129,7 +133,6 @@ public class ConversationFragment extends Fragment {
         ) {
             @Override
             protected void populateViewHolder(final ConvViewHolder convViewHolder, final Conversation conv, int position) {
-
                 final String list_user_id = getRef(position).getKey();
                 Log.d("userId", list_user_id);
                 Query lastMessageQuery = mMsgDatabase.child(list_user_id).limitToLast(1);
@@ -139,8 +142,8 @@ public class ConversationFragment extends Fragment {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         if (dataSnapshot.getValue() ==null){
-                            progressBar.dismiss();
                         }else{
+                            //player.start();
                             Map<String, String> mesage = new HashMap<String, String>();
                             for (DataSnapshot datas : dataSnapshot.getChildren()) {
                                 mesage.put(datas.getKey(), datas.getValue().toString());
@@ -153,7 +156,6 @@ public class ConversationFragment extends Fragment {
                             convViewHolder.setMessage(mesg.get(2), conv.isSeen());
                             convViewHolder.setTime(mesg.get(1).toString());
                         }
-                        progressBar.dismiss();
 
                     }
 
@@ -174,7 +176,7 @@ public class ConversationFragment extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        progressBar.dismiss();
+
                     }
                 });
 
@@ -186,9 +188,19 @@ public class ConversationFragment extends Fragment {
                         if (dataSnapshot.getValue() == null){
                             //Toast.makeText(context, "No Data found", Toast.LENGTH_SHORT).show();
                         }else{
-                            final String userName = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
                             String userThumb= null;
-                            if (dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue() != null) {
+                            String status = null;
+                            String mobileNo = null;
+                            final String userName = dataSnapshot.child(CommonConstants.USER_NAME).getValue().toString();
+                            if (!TextUtils.isEmpty(dataSnapshot.child(CommonConstants.PROFILE_STATUS).getValue().toString())){
+                              final  String s = dataSnapshot.child(CommonConstants.PROFILE_STATUS).getValue().toString();
+                              status = s;
+                            }
+                            if (!TextUtils.isEmpty(dataSnapshot.child(CommonConstants.MOBILE_NO).getValue().toString())){
+                                final  String s = dataSnapshot.child(CommonConstants.MOBILE_NO).getValue().toString();
+                                mobileNo = s;
+                            }
+                            if (!TextUtils.isEmpty(dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString())) {
                                 String userThumbImg = dataSnapshot.child(CommonConstants.THUMB_IMAGE).getValue().toString();
                                 convViewHolder.setUserImage(userThumbImg, getContext());
                                 userThumb = userThumbImg;
@@ -201,10 +213,10 @@ public class ConversationFragment extends Fragment {
 
                             }
                             convViewHolder.setName(userName);
-
-                            progressBar.dismiss();
                             //--OPENING CHAT ACTIVITY FOR CLICKED USER----
                             final String finalUserThumb = userThumb;
+                            final String finalStatus = status;
+                            final String finalMobileNo = mobileNo;
                             convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -213,6 +225,8 @@ public class ConversationFragment extends Fragment {
                                     chatIntent.putExtra(CommonConstants.UID, list_user_id);
                                     chatIntent.putExtra(CommonConstants.USER_NAME, userName);
                                     chatIntent.putExtra(CommonConstants.THUMB_IMAGE, finalUserThumb);
+                                    chatIntent.putExtra(CommonConstants.MOBILE_NO, finalMobileNo);
+                                    chatIntent.putExtra(CommonConstants.PROFILE_STATUS, finalStatus);
                                     startActivity(chatIntent);
                                 }
                             });

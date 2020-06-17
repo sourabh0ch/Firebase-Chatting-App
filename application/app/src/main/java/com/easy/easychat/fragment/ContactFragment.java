@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,8 +84,11 @@ public class ContactFragment extends Fragment {
             @Override
             protected void populateViewHolder(UserViewHolder viewHolder, final User users, int position) {
                 viewHolder.setName(users.getUserName());
-                viewHolder.setStatus(users.getStatus());
-                viewHolder.setImage(users.getThumb_image(), context);
+                viewHolder.setStatus(users.getProfileStatus());
+                if (!TextUtils.isEmpty(users.getThumb_image())){
+                    viewHolder.setImage(users.getThumb_image(), context);
+                }
+
                 final String user_id = getRef(position).getKey();
                 if (user_id.equals(mAuth.getCurrentUser().getUid())) {
                     viewHolder.mView.setVisibility(View.GONE);
@@ -100,6 +104,8 @@ public class ContactFragment extends Fragment {
                             chatIntent.putExtra(CommonConstants.UID, user_id);
                             chatIntent.putExtra(CommonConstants.USER_NAME, userName);
                             chatIntent.putExtra(CommonConstants.THUMB_IMAGE, users.getThumb_image());
+                            chatIntent.putExtra(CommonConstants.PROFILE_STATUS,users.getProfileStatus());
+                            chatIntent.putExtra(CommonConstants.MOBILE_NO,users.getMobileNo());
                             startActivity(chatIntent);
                         } catch (Exception e) {
                             e.printStackTrace();

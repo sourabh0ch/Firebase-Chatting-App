@@ -4,6 +4,10 @@
     android:layout_height="match_parent"
     android:background="@color/rapport_white">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar1" />
+
     <LinearLayout
         android:id="@+id/ll_signu_ip"
         android:layout_width="match_parent"
@@ -11,6 +15,7 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
+        android:layout_below="@+id/toolbar"
         >
 
         <EditText
@@ -101,5 +106,16 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/ProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:foregroundGravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/app_name"
+        android:indeterminateDrawable="@drawable/custom_progress_bar"
+        android:progress="50" />
 
 </RelativeLayout>
