@@ -79,7 +79,7 @@ public class LoginWithEmailAndPassword extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         etPwd.setTransformationMethod(new PasswordTransformationMethod());
         auth = FirebaseAuth.getInstance();
-        mdaDatabase = FirebaseDatabase.getInstance().getReference();
+        mdaDatabase = FirebaseDatabase.getInstance().getReference().child(CommonConstants.USER_AUTH);
     }
 
     private void initOnClickListener() {
