@@ -10,7 +10,7 @@ public class CommonConstants {
     public static final String STATUS = "status";
     public static final String PROFILE_STATUS = "profileStatus";
     public static final String USER_IMAGE = "image";
-    public static final String USER = "user";
+    public static final String USER_AUTH = "userAuth";
     public static final String USERS = "user";
     public static final String CHATS = "chats";
     public static final String MESSAGE = "message";
@@ -24,6 +24,8 @@ public class CommonConstants {
     public static final String CHAT_USER_ID = "uid";
     public static final String MESSAGE_ID = "message_id";
     public static final String TIME_STAMP = "time_stamp";
+    public static final String TIME = "time";
     public static final int SELECT_IMAGE = 0;
+    public static final int CAMERA_PIC_REQUEST = 1;
     public static final String USER_PROFILE_STORAGE = "UserProfile";
 }
