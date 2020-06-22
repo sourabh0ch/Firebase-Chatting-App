@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -27,10 +29,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 
 import com.easy.easychat.R;
+import com.easy.easychat.Utills.AppUtills;
 import com.easy.easychat.Utills.CommonConstants;
 import com.easy.easychat.activity.ImageViewActivity;
 import com.easy.easychat.activity.UpdateProfileActivity;
@@ -128,7 +132,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getUserInfo(uid);
     }
 
     private void inflateToollbar() {
@@ -245,25 +248,14 @@ public class ProfileFragment extends Fragment {
                 doLayoutWork();
             }
         });
+
         ivUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-
-                    Intent intent = new Intent(context, ImageViewActivity.class);
-                    intent.putExtra(CommonConstants.THUMB_IMAGE, thumbUrl);
-                    intent.putExtra(CommonConstants.USER_NAME, name);
-
-                    Pair<View, String> bodyPair = Pair.create(view, thumbUrl);
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(((Activity)context), bodyPair);
-
-                    ActivityCompat.startActivity(context, intent, options.toBundle());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                AppUtills.getImage(context, thumbUrl, name, view);
             }
         });
+
         ivPencil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -283,9 +275,21 @@ public class ProfileFragment extends Fragment {
         tvCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                llAttachmnet.setVisibility(View.GONE);
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, CommonConstants.CAMERA_PIC_REQUEST);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if(!checkAppPermissions()){
+                        requestPermissions(new String[]{CommonConstants.PERMISSION_CAMERA, CommonConstants.PERMISSION_WRITE, CommonConstants.PERMISSION_READ_PHONE}, CommonConstants.PERMISSION_REQ_CODE);
+                    }else{
+                        llAttachmnet.setVisibility(View.GONE);
+                        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, CommonConstants.CAMERA_PIC_REQUEST);
+                    }
+                }else{
+                    llAttachmnet.setVisibility(View.GONE);
+                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, CommonConstants.CAMERA_PIC_REQUEST);
+                }
+
+
             }
         });
 
@@ -382,6 +386,20 @@ public class ProfileFragment extends Fragment {
 
     private void updateUserProfile(final String uploadSessionUri) {
         getUserProfile();
+    }
+
+    private boolean checkAppPermissions(){
+        boolean status = true;
+        if(ContextCompat.checkSelfPermission(getActivity(), CommonConstants.PERMISSION_CAMERA)!= PackageManager.PERMISSION_GRANTED){
+            status = false;
+        }
+        if(ContextCompat.checkSelfPermission(getActivity(), CommonConstants.PERMISSION_WRITE)!= PackageManager.PERMISSION_GRANTED){
+            status = false;
+        }
+        if(ContextCompat.checkSelfPermission(getActivity(), CommonConstants.PERMISSION_READ_PHONE)!= PackageManager.PERMISSION_GRANTED){
+            status = false;
+        }
+        return status;
     }
 
 }

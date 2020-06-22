@@ -1,18 +1,25 @@
 package com.easy.easychat.activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +55,28 @@ public class LoginWithEmailAndPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_with_email_and_pwd);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        appPermissions();
         proceed();
+    }
+
+    private void appPermissions(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            boolean status = true;
+            if(ContextCompat.checkSelfPermission(LoginWithEmailAndPassword.this, CommonConstants.PERMISSION_READ_PHONE)!= PackageManager.PERMISSION_GRANTED){
+                status = false;
+            }
+            if(ContextCompat.checkSelfPermission(LoginWithEmailAndPassword.this, CommonConstants.PERMISSION_WRITE)!= PackageManager.PERMISSION_GRANTED){
+                status = false;
+            }
+            if(!status){
+                requestPermissions(new String[]{CommonConstants.PERMISSION_READ_PHONE, CommonConstants.PERMISSION_WRITE}, CommonConstants.PERMISSION_REQ_CODE);
+            }
+            else{
+                proceed();
+            }
+        }else{
+            proceed();
+        }
     }
 
     private void proceed() {
@@ -68,6 +96,64 @@ public class LoginWithEmailAndPassword extends AppCompatActivity {
             initView();
             initOnClickListener();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case CommonConstants.PERMISSION_REQ_CODE:
+                boolean read = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean writeStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if(read && writeStorage){
+//                        EasyLogger.configureLogger(ExternalStorage.getSdCardPath()
+//                                + CommonConstants.APP_FOLDER_NAME + "/"
+//                                + CommonConstants.APP_LOG_FILE_NAME);
+                        proceed();
+                    }else {
+                        Log.d("out","else");
+                        showMessageOKCancel();
+                    }
+                }
+                break;
+        }
+    }
+    private void showMessageOKCancel() {
+        final Dialog dialog = new Dialog(LoginWithEmailAndPassword.this, R.style.TransparentProgressDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.alert_app_permissions);
+
+        Button btnCancel =(Button) dialog.findViewById(R.id.btnCancel);
+        Button btnOk = (Button) dialog.findViewById(R.id.btnOk);
+        ImageView ivClose = (ImageView) dialog.findViewById(R.id.ivClose);
+        TextView tvMsg = (TextView) dialog.findViewById(R.id.tvMsg);
+        tvMsg.setText("You need to give both permissions.");
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appPermissions();
+                dialog.dismiss();
+            }
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                AppUtills.showAlert(LoginWithEmailAndPassword.this, "Sorry! We can not operate properly without permissions.");
+                LoginWithEmailAndPassword.this.finish();
+            }
+        });
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                AppUtills.showAlert(LoginWithEmailAndPassword.this, "Sorry! We can not operate properly without permissions.");
+                LoginWithEmailAndPassword.this.finish();
+            }
+        });
+        dialog.show();
     }
 
 

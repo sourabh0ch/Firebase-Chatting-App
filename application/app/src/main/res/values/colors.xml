@@ -34,7 +34,7 @@
     <color name="loginEtView">#e1e1e1</color>
     <color name="gray58">#949494</color>
     <color name="dividerColor">#DE000000</color>
-    <color name="color_magneta">#00BCAD</color>
+    <color name="color_magneta">#57606f</color>
     <color name="header_color">#2c2c2c</color>
     <color name="formName">#3F4556</color>
     <color name="timeColor">#66000000</color>
@@ -57,4 +57,7 @@
     <color name="rapport_green_dull">#00a29d</color>
 
     <color name="rapport_transparent_black_24">#24000000</color>
+    <color name="easy_grisaille">#57606f</color>
+    <color name="easy_turkish_aqua">#00BCAD</color>
+    00BCAD
 </resources>

@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.palette.graphics.Palette;
 
 import com.easy.easychat.R;
+import com.easy.easychat.Utills.AppUtills;
 import com.easy.easychat.Utills.CommonConstants;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -29,9 +30,10 @@ import com.squareup.picasso.Picasso;
 
 public class NewProfileActivity extends AppCompatActivity {
     private TextView userName, tvStatus, tvMobileNo, tvHeader;
-    CoordinatorLayout coordinatorLayout;
-    AppBarLayout appBarLayout;
+    private CoordinatorLayout coordinatorLayout;
+    private AppBarLayout appBarLayout;
     private Context context;
+    private ImageView toolbarImage;
     private String name, id, userImg, mobileNo, profileStatus;
     private ProgressBar progressBar;
     private Toolbar toolbar;
@@ -42,6 +44,7 @@ public class NewProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_profile);
         inflateToolbar();
         initView();
+        initOnClickListener();
     }
 
     private void inflateToolbar() {
@@ -80,7 +83,7 @@ public class NewProfileActivity extends AppCompatActivity {
         final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbarLayout.setTitleEnabled(true);
 
-        ImageView toolbarImage = (ImageView) findViewById(R.id.toolbar_image);
+        toolbarImage = (ImageView) findViewById(R.id.toolbar_image);
         toolbarImage.getLayoutParams().height = dWidth.getWidth();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
                 R.drawable.circle_image_group);
@@ -127,12 +130,18 @@ public class NewProfileActivity extends AppCompatActivity {
                 });
     }
 
-
-
-
     private void setAppBarOffset(int offsetPx) {
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
         AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
         behavior.onNestedPreScroll(coordinatorLayout, appBarLayout, null, 0, offsetPx, new int[]{0, 0});
+    }
+
+    private void initOnClickListener(){
+        toolbarImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppUtills.getImage(context,userImg, name, view);
+            }
+        });
     }
 }
