@@ -1,6 +1,13 @@
 package com.easy.easychat.Utills;
 
 public class CommonConstants {
+
+    public static final int PERMISSION_REQ_CODE = 200;
+    public static final String PERMISSION_AUDIO = "android.permission.RECORD_AUDIO";
+    public static final String PERMISSION_CAMERA = "android.permission.CAMERA";
+    public static final String PERMISSION_WRITE = "android.permission.WRITE_EXTERNAL_STORAGE";
+    public static final String PERMISSION_READ_PHONE = "android.permission.READ_PHONE_STATE";
+
     public static final String UID = "uid";
     public static final String TOKEN_ID = "tokenId";
     public static final String MOBILE_NO = "mobileNo";

@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -54,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton ivAttach, ivSend;
     private TextView tvHeader;
     private EditText etMessage;
-    private String chatUsername, chatUserId, chatUserImg,chatUserMobileNo, chatUserProfileStatus, currentUserId, currentUsername;
+    private String chatUsername, chatUserId, chatUserImg, chatUserMobileNo, chatUserProfileStatus, currentUserId, currentUsername;
     private RecyclerView rvMessasge;
     public static final int TOTAL_ITEM_TO_LOAD = 10;
     private int mCurrentPage = 1;
@@ -98,6 +101,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void intiView() {
         context = ChatActivity.this;
+        setStatusBar();
         mAuth = FirebaseAuth.getInstance();
         mRootReference = FirebaseDatabase.getInstance().getReference();
         currentUserId = mAuth.getCurrentUser().getUid();
@@ -120,6 +124,20 @@ public class ChatActivity extends AppCompatActivity {
         Picasso.with(context).load(chatUserImg).placeholder(R.drawable.circle_image_group).into(hdrImage);
         //getUserProfile(chatUserId);
         loadMessage();
+    }
+
+    public void setStatusBar() {
+        Window window = this.getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        // finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.easy_grisaille));
+
     }
 
     private void initOnclickListener() {

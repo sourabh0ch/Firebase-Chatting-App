@@ -9,9 +9,11 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
+import com.easy.easychat.Utills.AppUtills;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
@@ -26,6 +28,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
@@ -60,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
             inflateToolBar();
             initOnclickListener();
             context = HomeActivity.this;
+            setStatusBar();
             auth = FirebaseAuth.getInstance();
             mDatabaseReference = FirebaseDatabase.getInstance().getReference();
             progressDialog = new ProgressDialog(this);
@@ -102,6 +107,7 @@ public class HomeActivity extends AppCompatActivity {
             });
 
             setupViewPager(viewPager);
+            setUserOnlineStatus();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,6 +122,20 @@ public class HomeActivity extends AppCompatActivity {
         adapter.addFragment(contactFragment);
         adapter.addFragment(profileFragment);
         viewPager.setAdapter(adapter);
+    }
+
+    public void setStatusBar() {
+        Window window = this.getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        // finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.easy_grisaille));
+
     }
 
     private void inflateToolBar() {
@@ -192,7 +212,6 @@ public class HomeActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
     }
 
-
     private void signOutServiceCall() {
         try {
             FirebaseAuth.getInstance().signOut();
@@ -203,6 +222,9 @@ public class HomeActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setUserOnlineStatus() {
 
     }
 
